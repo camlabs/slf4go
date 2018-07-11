@@ -2,120 +2,131 @@ package slf4go
 
 import (
 	"fmt"
-	"log"
-	"os"
+	"path/filepath"
+	"runtime"
+	"time"
+
+	config "github.com/dynamicgo/go-config"
+	"github.com/fatih/color"
 )
 
-const (
-	l_TRACE = "trace"
-	l_DEBUG = "debug"
-	l_INFO  = "info"
-	l_WARN  = "warn"
-	l_ERROR = "error"
-	l_FATAL = "fatal"
-)
+var fatalp = color.New(color.FgRed).PrintFunc()
+var fatalf = color.New(color.FgRed).PrintfFunc()
 
-const prefix_format = "[%s] [%s] "
+var errorp = color.New(color.FgRed).PrintFunc()
+var errorf = color.New(color.FgRed).PrintfFunc()
 
-//------------------------------------------------------------------------------------------------------------
-// simple logger that use log package
-type nativeLogger struct {
-	name        string
-	traceLogger *log.Logger
-	debugLogger *log.Logger
-	infoLogger  *log.Logger
-	warnLogger  *log.Logger
-	errorLogger *log.Logger
-	fatalLogger *log.Logger
+var warnp = color.New(color.FgYellow).PrintFunc()
+var warnf = color.New(color.FgYellow).PrintfFunc()
+
+var infop = color.New(color.FgWhite).PrintFunc()
+var infof = color.New(color.FgWhite).PrintfFunc()
+
+var debugp = color.New(color.FgCyan).PrintFunc()
+var debugf = color.New(color.FgCyan).PrintfFunc()
+
+var tracep = color.New(color.FgBlue).PrintFunc()
+var tracef = color.New(color.FgBlue).PrintfFunc()
+
+type colorConsole struct {
 }
 
-// it should be private
-func newNativeLogger(name string) *nativeLogger {
-	flag := log.Ldate | log.Ltime | log.Lmicroseconds
-	logger := &nativeLogger{}
-	logger.name = name
-	logger.traceLogger = log.New(os.Stdout, fmt.Sprintf(prefix_format, name, l_TRACE), flag)
-	logger.debugLogger = log.New(os.Stdout, fmt.Sprintf(prefix_format, name, l_DEBUG), flag)
-	logger.infoLogger = log.New(os.Stdout, fmt.Sprintf(prefix_format, name, l_INFO), flag)
-	logger.warnLogger = log.New(os.Stdout, fmt.Sprintf(prefix_format, name, l_WARN), flag)
-	logger.errorLogger = log.New(os.Stderr, fmt.Sprintf(prefix_format, name, l_ERROR), flag)
-	logger.fatalLogger = log.New(os.Stderr, fmt.Sprintf(prefix_format, name, l_FATAL), flag)
-	return logger
+func newColorConsole() LoggerFactory {
+	return &colorConsole{}
 }
 
-func (logger *nativeLogger) GetName() string {
+func (console *colorConsole) GetLogger(name string) Logger {
+	return &colorConsoleLogger{name: name}
+}
+
+type colorConsoleLogger struct {
+	name string
+}
+
+func (logger *colorConsoleLogger) GetName() string {
 	return logger.name
 }
 
-func (logger *nativeLogger) Trace(args ...interface{}) {
-	logger.traceLogger.Println(args...)
+func source() string {
+	_, filename, line, _ := runtime.Caller(3)
+
+	return fmt.Sprintf("%s:%d", filepath.Base(filename), line)
 }
 
-func (logger *nativeLogger) TraceF(format string, args ...interface{}) {
-	logger.traceLogger.Printf(format, args...)
+func (logger *colorConsoleLogger) Trace(args ...interface{}) {
+	tracef("[%s][%s][%s] TRACE ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	tracep(args...)
+	tracep("\n")
 }
 
-func (logger *nativeLogger) Debug(args ...interface{}) {
-	logger.debugLogger.Println(args...)
+func (logger *colorConsoleLogger) TraceF(format string, args ...interface{}) {
+	tracef("[%s][%s][%s] TRACE ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	tracef(format, args...)
+	tracep("\n")
 }
 
-func (logger *nativeLogger) DebugF(format string, args ...interface{}) {
-	logger.debugLogger.Printf(format, args...)
+func (logger *colorConsoleLogger) Debug(args ...interface{}) {
+	debugf("[%s][%s][%s] DEBUG ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	debugp(args...)
+	debugp("\n")
 }
 
-func (logger *nativeLogger) Info(args ...interface{}) {
-	logger.infoLogger.Println(args...)
+func (logger *colorConsoleLogger) DebugF(format string, args ...interface{}) {
+	debugf("[%s][%s][%s] DEBUG ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	debugf(format, args...)
+	debugp("\n")
 }
 
-func (logger *nativeLogger) InfoF(format string, args ...interface{}) {
-	logger.infoLogger.Printf(format, args...)
+func (logger *colorConsoleLogger) Info(args ...interface{}) {
+	infof("[%s][%s][%s] INFO  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	infop(args...)
+	infop("\n")
 }
 
-func (logger *nativeLogger) Warn(args ...interface{}) {
-	logger.warnLogger.Println(args...)
+func (logger *colorConsoleLogger) InfoF(format string, args ...interface{}) {
+	infof("[%s][%s][%s] INFO  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	infof(format, args...)
+	infop("\n")
 }
 
-func (logger *nativeLogger) WarnF(format string, args ...interface{}) {
-	logger.warnLogger.Printf(format, args...)
+func (logger *colorConsoleLogger) Warn(args ...interface{}) {
+	warnf("[%s][%s][%s] WARN  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	warnp(args...)
+	warnp("\n")
 }
 
-func (logger *nativeLogger) Error(args ...interface{}) {
-	logger.errorLogger.Println(args...)
+func (logger *colorConsoleLogger) WarnF(format string, args ...interface{}) {
+	warnf("[%s][%s][%s] WARN  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	warnf(format, args...)
+	warnp("\n")
 }
 
-func (logger *nativeLogger) ErrorF(format string, args ...interface{}) {
-	logger.errorLogger.Printf(format, args...)
+func (logger *colorConsoleLogger) Error(args ...interface{}) {
+	errorf("[%s][%s][%s] ERROR ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	errorp(args...)
+	errorp("\n")
 }
 
-func (logger *nativeLogger) Fatal(args ...interface{}) {
-	logger.fatalLogger.Fatalln(args...)
+func (logger *colorConsoleLogger) ErrorF(format string, args ...interface{}) {
+	errorf("[%s][%s][%s] ERROR ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	errorf(format, args...)
+	errorp("\n")
 }
 
-func (logger *nativeLogger) FatalF(format string, args ...interface{}) {
-	logger.fatalLogger.Fatalf(format, args...)
+func (logger *colorConsoleLogger) Fatal(args ...interface{}) {
+	fatalf("[%s][%s][%s] FATAL ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	fatalp(args...)
+	fatalp("\n")
 }
 
-type nativeLoggerFactory struct {
-	loggers map[string]Logger
+func (logger *colorConsoleLogger) FatalF(format string, args ...interface{}) {
+	fatalf("[%s][%s][%s] FATAL ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+	fatalf(format, args...)
+	fatalp("\n")
 }
 
-func newNativeLoggerFactory() *nativeLoggerFactory {
-	factory := &nativeLoggerFactory{
-		loggers: make(map[string]Logger),
-	}
-
-	return factory
-}
-
-func (factory *nativeLoggerFactory) GetLogger(name string) Logger {
-
-	if logger, ok := factory.loggers[name]; ok {
-		return logger
-	}
-
-	logger := newNativeLogger(name)
-
-	factory.loggers[name] = logger
-
-	return logger
+func init() {
+	RegisterBackend("console", func(config config.Config) (LoggerFactory, error) {
+		return newColorConsole(), nil
+	})
 }
