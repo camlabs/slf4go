@@ -26,13 +26,12 @@ func TestConfig(t *testing.T) {
 		`
 		{
 			"default":{
-				"backend":"console",
-				"level":"warn|error|trace"
+				"backend":"console"
 			},
 			"logger":{
 				"test":{
 					"backend":"console",
-					"level":"warn"
+					"level":"warn|error"
 				}
 			}
 		}

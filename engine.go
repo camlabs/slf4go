@@ -61,6 +61,8 @@ func loadBackend(config config.Config) (*LoggerBinder, LoggerFactory, error) {
 		return nil, nil, nil
 	}
 
+	binder.Backend = "null"
+
 	if err := config.Scan(&binder); err != nil {
 		return nil, nil, err
 	}
@@ -69,6 +71,10 @@ func loadBackend(config config.Config) (*LoggerBinder, LoggerFactory, error) {
 		binder.levels = Debug | Warn | Info | Error | Fatal | Trace
 	} else {
 		binder.levels = parseLevel(binder.Level)
+	}
+
+	if binder.Backend == "" {
+		binder.Backend = "null"
 	}
 
 	backendF := register.Get(binder.Backend)
@@ -131,7 +137,7 @@ func (engine *Engine) Load(config config.Config) error {
 		binder.Name = name
 
 		engine.loggerMapping[name] = binder
-		engine.namedBackend[name] = backend
+		engine.namedBackend[binder.Backend] = backend
 	}
 
 	return nil

@@ -126,6 +126,7 @@ func (logger *colorConsoleLogger) FatalF(format string, args ...interface{}) {
 }
 
 func init() {
+	println("[slf4go] register console backend")
 	RegisterBackend("console", func(config config.Config) (LoggerFactory, error) {
 		return newColorConsole(), nil
 	})
