@@ -37,6 +37,8 @@ func newColorConsole() LoggerFactory {
 		messages: make(chan func(), 1000),
 	}
 
+	go console.runLoop()
+
 	return console
 }
 
@@ -67,8 +69,10 @@ func source() string {
 
 func (logger *colorConsoleLogger) Trace(args ...interface{}) {
 
+	s := source()
+
 	logger.messages <- func() {
-		tracef("[%s][%s][%s] TRACE ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		tracef("[%s][%s][%s] TRACE ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		tracep(args...)
 		tracep("\n")
 	}
@@ -76,88 +80,99 @@ func (logger *colorConsoleLogger) Trace(args ...interface{}) {
 }
 
 func (logger *colorConsoleLogger) TraceF(format string, args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		tracef("[%s][%s][%s] TRACE ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		tracef("[%s][%s][%s] TRACE ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		tracef(format, args...)
 		tracep("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) Debug(args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		debugf("[%s][%s][%s] DEBUG ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		debugf("[%s][%s][%s] DEBUG ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		debugp(args...)
 		debugp("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) DebugF(format string, args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		debugf("[%s][%s][%s] DEBUG ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		debugf("[%s][%s][%s] DEBUG ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		debugf(format, args...)
 		debugp("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) Info(args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		infof("[%s][%s][%s] INFO  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		infof("[%s][%s][%s] INFO  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		infop(args...)
 		infop("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) InfoF(format string, args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		infof("[%s][%s][%s] INFO  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		infof("[%s][%s][%s] INFO  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		infof(format, args...)
 		infop("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) Warn(args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		warnf("[%s][%s][%s] WARN  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		warnf("[%s][%s][%s] WARN  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		warnp(args...)
 		warnp("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) WarnF(format string, args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		warnf("[%s][%s][%s] WARN  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		warnf("[%s][%s][%s] WARN  ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		warnf(format, args...)
 		warnp("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) Error(args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		errorf("[%s][%s][%s] ERROR ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		errorf("[%s][%s][%s] ERROR ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		errorp(args...)
 		errorp("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) ErrorF(format string, args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		errorf("[%s][%s][%s] ERROR ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		errorf("[%s][%s][%s] ERROR ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		errorf(format, args...)
 		errorp("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) Fatal(args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		fatalf("[%s][%s][%s] FATAL ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		fatalf("[%s][%s][%s] FATAL ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		fatalp(args...)
 		fatalp("\n")
 	}
 }
 
 func (logger *colorConsoleLogger) FatalF(format string, args ...interface{}) {
+	s := source()
 	logger.messages <- func() {
-		fatalf("[%s][%s][%s] FATAL ", time.Now().Format("2006-01-02 15:04:05"), logger.name, source())
+		fatalf("[%s][%s][%s] FATAL ", time.Now().Format("2006-01-02 15:04:05"), logger.name, s)
 		fatalf(format, args...)
 		fatalp("\n")
 	}
