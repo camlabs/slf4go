@@ -27,6 +27,8 @@ type Logger interface {
 	Fatal(args ...interface{})
 
 	FatalF(format string, args ...interface{})
+
+	SourceCodeLevel(level int)
 }
 
 // LoggerFactory logger's factory interface
@@ -61,6 +63,10 @@ type loggerWrapper struct {
 
 func (logger *loggerWrapper) GetName() string {
 	return logger.impl.GetName()
+}
+
+func (logger *loggerWrapper) SourceCodeLevel(level int) {
+	logger.impl.SourceCodeLevel(level)
 }
 
 func (logger *loggerWrapper) Trace(args ...interface{}) {

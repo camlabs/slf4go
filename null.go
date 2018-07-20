@@ -17,6 +17,10 @@ type nullLogger struct {
 	name string
 }
 
+func (logger *nullLogger) SourceCodeLevel(level int) {
+
+}
+
 func (logger *nullLogger) GetName() string {
 	return logger.name
 }
