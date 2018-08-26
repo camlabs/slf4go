@@ -26,7 +26,7 @@ func TestConfig(t *testing.T) {
 		`
 		{
 			"default":{
-				"backend":"console"
+				"backend":"null"
 			},
 			"logger":{
 				"test":{

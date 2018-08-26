@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
+	"sync"
 	"time"
 
 	config "github.com/dynamicgo/go-config"
@@ -42,9 +43,13 @@ func newColorConsole() LoggerFactory {
 	return console
 }
 
+var mutex sync.Mutex
+
 func (console *colorConsole) runLoop() {
 	for f := range console.messages {
+		mutex.Lock()
 		f()
+		mutex.Unlock()
 	}
 }
 
