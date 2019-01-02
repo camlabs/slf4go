@@ -36,7 +36,6 @@ func (console *colorConsole) runLoop() {
 	for f := range console.messages {
 		mutex.Lock()
 		f()
-		fmt.Printf("console(%p)", console)
 		mutex.Unlock()
 	}
 }
